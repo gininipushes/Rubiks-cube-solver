@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rubik's Cube Solver · Kociemba two-phase in WebAssembly</title>
+  <meta name="description" content="A C++ Kociemba two-phase Rubik's cube solver compiled to WebAssembly, with a 3D visualiser." />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:," />
+  <script type="importmap">
+    { "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    } }
+  </script>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Rubik's Cube Solver</h1>
+      <p class="sub">Kociemba's two-phase algorithm in C++, running in your browser as WebAssembly</p>
+    </div>
+    <a class="gh" href="https://github.com/gininipushes/Rubiks-cube-solver" target="_blank" rel="noopener">GitHub</a>
+  </header>
+
+  <main>
+    <section class="stage">
+      <div id="view"></div>
+      <div id="status" class="status">Loading solver…</div>
+    </section>
+
+    <section class="panel">
+      <div class="row">
+        <button id="randomState" class="primary">Random state</button>
+        <button id="scramble">Scramble 25</button>
+        <button id="reset">Reset</button>
+      </div>
+
+      <div class="row">
+        <button id="solve" class="accent">Solve</button>
+        <label class="sel">Target
+          <select id="target">
+            <option value="20" selected>≤ 20 moves</option>
+            <option value="21">≤ 21 (faster)</option>
+            <option value="22">≤ 22 (fastest)</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="solution" class="solution" hidden>
+        <div class="moves" id="moves"></div>
+        <div class="row playback">
+          <button id="back" title="Step back">◀</button>
+          <button id="play" title="Play">▶ Play</button>
+          <button id="fwd" title="Step forward">▶</button>
+          <label class="sel">Speed
+            <input id="speed" type="range" min="80" max="700" value="300" />
+          </label>
+        </div>
+        <div class="meta" id="meta"></div>
+      </div>
+
+      <details>
+        <summary>Turn faces</summary>
+        <div class="grid" id="moveButtons"></div>
+        <p class="hint">Keyboard: U R F D L B turn clockwise, hold Shift for counter-clockwise. Drag to orbit.</p>
+      </details>
+
+      <details>
+        <summary>Paint your own cube</summary>
+        <p class="hint">Pick a colour, then tap stickers to match your real cube (white on top, green in front). Then hit Solve.</p>
+        <div class="palette" id="palette"></div>
+        <button id="clearPaint">Blank all stickers</button>
+      </details>
+
+      <details>
+        <summary>Enter a scramble or facelets</summary>
+        <div class="row">
+          <input id="algInput" placeholder="R U R' U' F2 D L2 B" />
+          <button id="applyAlg">Apply</button>
+        </div>
+        <div class="row">
+          <input id="faceletInput" placeholder="54-char facelet string, URFDLB order" />
+          <button id="loadFacelets">Load</button>
+        </div>
+        <div class="row">
+          <code id="faceletOut" class="facelets"></code>
+        </div>
+      </details>
+
+      <details>
+        <summary>How it works</summary>
+        <p>Phase 1 uses IDA* to reach the subgroup ⟨U, D, R2, L2, F2, B2⟩, where every piece is oriented and the middle-layer edges sit in the middle layer. Phase 2 solves the rest using only those moves. Coordinates, move tables and BFS pruning tables make each search step a handful of array lookups. The solver keeps trying longer phase-1 paths until the total length hits the target.</p>
+        <p><a href="https://github.com/gininipushes/Rubiks-cube-solver/blob/main/docs/HOW_IT_WORKS.md" target="_blank" rel="noopener">Full write-up →</a></p>
+      </details>
+    </section>
+  </main>
+
+  <footer>Built by Pratyush Acharya · C++17 → wasm32 · MIT license</footer>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -11,6 +11,17 @@ R2 U B' L2 D' F2 U R U' R'
 
 By default it stops at the first solution of 20 moves or fewer. Ask for a shorter target with `--length` and it keeps searching until it finds one or hits the time limit.
 
+## Live demo
+
+**[gininipushes.github.io/Rubiks-cube-solver](https://gininipushes.github.io/Rubiks-cube-solver/)**: the same C++ solver compiled to WebAssembly, with a 3D cube you can scramble, paint to match your real cube, and watch solve itself. The solver runs in a Web Worker, so the page stays smooth while it searches.
+
+To build the WebAssembly module yourself (needs clang, lld and a WASI sysroot):
+
+```bash
+./web/build.sh                       # writes web/solver.wasm
+python3 -m http.server -d web 8000   # then open http://localhost:8000
+```
+
 ## Results
 
 Random-state cubes (uniformly random positions, like WCA scrambles), 1 s limit, one core:
@@ -95,6 +106,8 @@ include/   cubie.hpp  coord.hpp  solver.hpp
 src/       cubie.cpp  coord.cpp  solver.cpp  main.cpp
 tests/     tests.cpp
 docs/      HOW_IT_WORKS.md
+web/       wasm_api.cpp  build.sh  solver.wasm  solver.js  worker.js
+           cubemodel.js  app.js  index.html  style.css   (3D visualiser)
 ```
 
 ## Roadmap
@@ -102,7 +115,8 @@ docs/      HOW_IT_WORKS.md
 - [ ] Symmetry-reduced phase-1 coordinates (16-fold) for stronger pruning
 - [ ] Search from all three axes and the inverse cube in parallel
 - [ ] Optimal solver mode (Korf-style IDA\* with larger tables)
-- [ ] Python bindings and a small web visualiser
+- [x] WebAssembly build and 3D web visualiser
+- [ ] Python bindings
 
 ## References
 
